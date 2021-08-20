@@ -1,0 +1,12 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src"]
+
+ :dependencies
+ [[cider/cider-nrepl "0.26.0"]]
+
+ :builds
+ {:dev {:exports-var extension.core/exports
+        :target :node-library
+        :output-to "out/extension.js"
+        :devtools {:after-load extension.core/reload}}}}

@@ -1,0 +1,7 @@
+out/
+node_modules/
+.lsp/
+.calva/
+
+.shadow-cljs
+package-lock.json

@@ -1,0 +1,33 @@
+{
+	"name": "advanced-navigation",
+	"displayName": "advanced-navigation",
+	"description": "",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.59.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:advanced-navigation.activate",
+		"onCommand:advanced-navigation.exchangePointAndMark"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "advanced-navigation.activate",
+				"title": "Advanced Navigation: Activate"
+			},
+			{
+				"command": "advanced-navigation.exchangePointAndMark",
+				"title": "Advanced Navigation: Exchange point and mark"
+			}
+		]
+	},
+	"devDependencies": {
+		"shadow-cljs": "^2.15.4",
+		"@types/vscode": "^1.59.0"
+	}
+}
