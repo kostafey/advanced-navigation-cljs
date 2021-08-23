@@ -41,3 +41,54 @@
 
 (defn set-selection [start end]
   (set! (. (editor) -selection) (new-selection start end)))
+
+(defn remove-selection []
+  (let [sel (selection)]
+    (set-selection (. sel -active) (. sel -active))))
+
+(defn execute-command
+  "Executes the command denoted by the given command identifier.
+   `command` Identifier of the command to execute.
+   `rest` Parameters passed to the command function.
+
+   return A thenable that resolves to the returned value of the given command. 
+   `undefined` when the command handler function doesn't return anything.
+   "
+  [command & rest]
+  ((.. vscode.commands -executeCommand) command rest))
+
+(defn cursor
+  "The position of the cursor."
+  []
+  (. (selection) -active))
+
+(defn following-char
+  "Return the character following point, as a string."
+  []
+  (let [cursorPos (cursor)
+        charNumber (. cursorPos -character)
+        document (. (editor) -document)
+        lineText (. ((. document -lineAt) cursorPos) -text)]
+    (subs lineText 
+          charNumber
+          (if (> (+ charNumber 1) (count lineText))
+            charNumber
+            (+ charNumber 1)))))
+
+(defn preceding-char
+  "Return the character preceding point, as a string."
+  []
+  (let [cursorPos (. (selection) -active)
+        charNumber (. cursorPos -character)
+        document (. (editor) -document)
+        lineText (. ((. document -lineAt) cursorPos) -text)]
+    (subs lineText
+          (if (> charNumber 0)
+            (- charNumber 1)
+            charNumber)
+          charNumber)))
+
+(defn in?
+  "true if coll contains elm"
+  [coll elm]
+  (some #(= elm %) coll))

@@ -11,7 +11,11 @@
 	],
 	"activationEvents": [
 		"onCommand:advanced-navigation.activate",
-		"onCommand:advanced-navigation.exchangePointAndMark"
+		"onCommand:advanced-navigation.exchangePointAndMark",
+		"onCommand:advanced-navigation.forwardSexp",
+		"onCommand:advanced-navigation.backwardSexp",
+		"onCommand:advanced-navigation.forwardSexpSelect",
+		"onCommand:advanced-navigation.backwardSexpSelect"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -23,6 +27,22 @@
 			{
 				"command": "advanced-navigation.exchangePointAndMark",
 				"title": "Advanced Navigation: Exchange point and mark"
+			},
+			{
+				"command": "advanced-navigation.forwardSexp",
+				"title": "Advanced Navigation: Forward sexp"
+			},
+			{
+				"command": "advanced-navigation.backwardSexp",
+				"title": "Advanced Navigation: Backward sexp"
+			},
+			{
+				"command": "advanced-navigation.forwardSexpSelect",
+				"title": "Advanced Navigation: Forward sexp select"
+			},
+			{
+				"command": "advanced-navigation.backwardSexpSelect",
+				"title": "Advanced Navigation: Backward sexp select"
 			}
 		]
 	},
