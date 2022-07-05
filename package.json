@@ -2,9 +2,9 @@
 	"name": "advanced-navigation",
 	"displayName": "advanced-navigation",
 	"description": "",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
-		"vscode": "^1.59.0"
+		"vscode": "^1.68.1"
 	},
 	"categories": [
 		"Other"
@@ -48,6 +48,6 @@
 	},
 	"devDependencies": {
 		"shadow-cljs": "^2.15.4",
-		"@types/vscode": "^1.59.0"
+		"@types/vscode": "^1.68.1"
 	}
 }

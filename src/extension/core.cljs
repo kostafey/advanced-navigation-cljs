@@ -9,7 +9,11 @@
                                    cursor
                                    following-char
                                    preceding-char
-                                   in?]]))
+                                   in?
+                                   tab-groups
+                                   show-text-document
+                                   show-text-document-by-uri
+                                   close-tab]]))
 
 (defn exchange-point-and-mark
   "Put the selection start where cursor is now, and cursor where the 
@@ -60,6 +64,35 @@
 (defn activate-advanced-navigation []
   (message "advanced-navigation activated"))
 
+(defn swap-tab-groups
+  "Swap 2 tab groups."
+  []
+  (let [active-document (. (editor) -document)
+        groups (tab-groups)
+        get-tab-uri-list (fn [group]
+                           (->>
+                            (. group -tabs)
+                            (filter
+                             (fn [t] (not (undefined? (. t -input)))))
+                            (map
+                             (fn [t] (.. t -input -uri)))))
+        first-group (first groups)
+        first-tab-uri-list (get-tab-uri-list first-group)
+        first-view (. first-group -viewColumn)
+        second-group (second groups)
+        second-tab-uri-list (get-tab-uri-list second-group)
+        second-view (. second-group -viewColumn)
+        target-active-group (if (. first-group -isActive)
+                              second-view
+                              first-view)]
+    (mapv (fn [uri] (show-text-document-by-uri uri {:viewColumn second-view}))
+          first-tab-uri-list)
+    (mapv (fn [uri] (show-text-document-by-uri uri {:viewColumn first-view}))
+          second-tab-uri-list)
+    (show-text-document active-document {:viewColumn target-active-group})
+    (mapv (fn [tab] (close-tab tab)) (. first-group -tabs))
+    (mapv (fn [tab] (close-tab tab)) (. second-group -tabs))))
+
 (defn activate [context]
   (. context.subscriptions
      (push (register-command
@@ -76,6 +109,9 @@
   (. context.subscriptions
      (push (register-command
             "advanced-navigation.exchangePointAndMark" #'exchange-point-and-mark)))
+  (. context.subscriptions
+     (push (register-command
+            "advanced-navigation.swapTabGroups" #'swap-tab-groups)))
   (. context.subscriptions
      (push (register-command
             "advanced-navigation.activate" #'activate-advanced-navigation))))

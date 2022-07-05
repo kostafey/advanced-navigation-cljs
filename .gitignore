@@ -2,6 +2,5 @@ out/
 node_modules/
 .lsp/
 .calva/
-
+.clj-kondo/
 .shadow-cljs
-package-lock.json
