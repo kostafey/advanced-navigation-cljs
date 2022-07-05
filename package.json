@@ -15,7 +15,8 @@
 		"onCommand:advanced-navigation.forwardSexp",
 		"onCommand:advanced-navigation.backwardSexp",
 		"onCommand:advanced-navigation.forwardSexpSelect",
-		"onCommand:advanced-navigation.backwardSexpSelect"
+		"onCommand:advanced-navigation.backwardSexpSelect",
+		"onCommand:advanced-navigation.swapTabGroups"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -43,6 +44,10 @@
 			{
 				"command": "advanced-navigation.backwardSexpSelect",
 				"title": "Advanced Navigation: Backward sexp select"
+			},
+			{
+				"command": "advanced-navigation.swapTabGroups",
+				"title": "Advanced Navigation: Swap 2 tab groups"
 			}
 		]
 	},

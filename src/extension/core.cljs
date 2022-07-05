@@ -64,34 +64,56 @@
 (defn activate-advanced-navigation []
   (message "advanced-navigation activated"))
 
+(defn- get-tabs-list
+  "^Tab[]"
+  [^TabGroup tab-group]
+  (->>
+   (. tab-group -tabs)
+   (filter
+    (fn [t] (not (undefined? (. t -input)))))))
+
+(defn- get-tab-uri-list
+  "^Uri[]"
+  [^TabGroup tab-group]
+  (->> (get-tabs-list tab-group)
+       (map
+        (fn [t] (.. t -input -uri)))))
+
 (defn swap-tab-groups
   "Swap 2 tab groups."
   []
   (let [active-document (. (editor) -document)
-        groups (tab-groups)
-        get-tab-uri-list (fn [group]
-                           (->>
-                            (. group -tabs)
-                            (filter
-                             (fn [t] (not (undefined? (. t -input)))))
-                            (map
-                             (fn [t] (.. t -input -uri)))))
-        first-group (first groups)
-        first-tab-uri-list (get-tab-uri-list first-group)
-        first-view (. first-group -viewColumn)
-        second-group (second groups)
-        second-tab-uri-list (get-tab-uri-list second-group)
-        second-view (. second-group -viewColumn)
-        target-active-group (if (. first-group -isActive)
-                              second-view
-                              first-view)]
-    (mapv (fn [uri] (show-text-document-by-uri uri {:viewColumn second-view}))
-          first-tab-uri-list)
-    (mapv (fn [uri] (show-text-document-by-uri uri {:viewColumn first-view}))
-          second-tab-uri-list)
-    (show-text-document active-document {:viewColumn target-active-group})
-    (mapv (fn [tab] (close-tab tab)) (. first-group -tabs))
-    (mapv (fn [tab] (close-tab tab)) (. second-group -tabs))))
+        groups (tab-groups)]
+    (when (> (count groups) 1)
+      (let [first-group (first groups)
+            first-tabs-list (get-tabs-list first-group)
+            first-tab-uri-list (get-tab-uri-list first-group)
+            first-view (. first-group -viewColumn)
+            second-group (second groups)
+            second-tabs-list (get-tabs-list second-group)
+            second-tab-uri-list (get-tab-uri-list second-group)
+            second-view (. second-group -viewColumn)
+            target-active-group (if (. first-group -isActive)
+                                  second-view
+                                  first-view)
+            active-tabs (atom [])
+            move-tabs (fn [tab-uri-list view]
+                       (fn [^Tab tab]
+                        (when (. tab -activeTab)
+                          (swap! active-tabs conj tab))
+                        (let [^Uri uri (.. tab -input -uri)]
+                          (when-not (in? (map (fn [^Uri uri] (. uri -fsPath))
+                                              tab-uri-list)
+                                         (. uri -fsPath))
+                            (show-text-document-by-uri uri {:viewColumn view})
+                            (close-tab tab)))))]
+        (mapv (move-tabs second-tab-uri-list second-view) first-tabs-list)
+        (mapv (move-tabs first-tab-uri-list first-view) second-tabs-list)
+        (mapv (fn [tab]
+                (show-text-document-by-uri (.. tab -input -uri) {}))
+              @active-tabs)
+        (show-text-document active-document 
+                            {:viewColumn target-active-group})))))
 
 (defn activate [context]
   (. context.subscriptions

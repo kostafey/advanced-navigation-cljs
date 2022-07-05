@@ -37,7 +37,7 @@
   []
   (. (. vscode.window -tabGroups) -all))
 
-(defn get-active-tab [tab-group]
+(defn get-active-tab [^TabGroup tab-group]
   (. tab-group -activeTab))
 
 (def view-column
