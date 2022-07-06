@@ -15,7 +15,9 @@ Minimal CLJS VSCode extension using shadow-cljs:
     and select text.
 * `advanced-navigation.backwardSexpSelect` - Move cursor backward to pair bracket
     and select text.
-* `advanced-navigation.swapTabGroups` - Swap 2 tab groups
+* `advanced-navigation.swapTabGroups` - Swap 2 tab groups.
+* `advanced-navigation.justOneSpace` - Delete all spaces and tabs around point, 
+    leaving one space.
 
 ## Quick hint
 

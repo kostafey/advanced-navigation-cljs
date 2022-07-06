@@ -1,4 +1,5 @@
-(ns extension.lib)
+(ns extension.lib
+  (:require [clojure.string :as s]))
 
 (def vscode (js/require "vscode"))
 
@@ -19,14 +20,15 @@
 (defn message
   "Show an information message to users."
   [msg]
-  (.. vscode.window (showInformationMessage msg)))
+  (.. vscode.window (showInformationMessage msg))
+  msg)
 
 (defn editor
   "The currently active editor or `undefined`. The active editor is the one
    that currently has focus or, when none has focus, the one that has changed
    input most recently.
    
-   ^TextDocument"
+   ^TextEditor"
   []
   (. vscode.window -activeTextEditor))
 
@@ -95,7 +97,9 @@
 
 (defn selection
   "The primary selection on this text editor.
-   Shorthand for `TextEditor.selections[0]`."
+   Shorthand for `TextEditor.selections[0]`.
+   
+   ^Selection"
   []
   (. (editor) -selection))
 
@@ -106,6 +110,9 @@
 
 (defn set-selection [start end]
   (set! (. (editor) -selection) (new-selection start end)))
+
+(defn goto-char [^Position position]
+  (set-selection position position))
 
 (defn remove-selection []
   (let [sel (selection)]
@@ -123,9 +130,80 @@
   ((.. vscode.commands -executeCommand) command rest))
 
 (defn cursor
-  "The position of the cursor."
+  "The position of the cursor.
+   
+   ^Position"
   []
   (. (selection) -active))
+
+(extend-type vscode.Position
+  Object
+  (toString [this]
+    (str "Position: " {:line (. this -line)
+                       :character (. this -character)})))
+
+(defn position
+  "Represents a line and character position, such as
+   the position of the cursor.
+   
+   ^Position"
+  ([^Vector< ^number> pos]
+   (position (first pos) (second pos)))
+  ([^number line ^number character]
+   (vscode.Position. line character)))
+
+(extend-type vscode.Range
+  Object
+  (toString [this]
+    (str "Range: " {:start {:line (.. this -start -line)
+                            :character (.. this -start -character)}
+                    :end {:line (.. this -end -line)
+                          :character (.. this -end -character)}})))
+
+(defn vs-range
+  "A range represents an ordered pair of two positions.
+   
+   ^Range"
+  [^Position start ^Position end]
+  (vscode.Range. start end))
+
+(defn insert
+  "Insert text at a location.
+   You can use \r \n or \n in `value `and they will be normalized to the
+   current ^TextDocument document.
+ 
+   ^string"
+  ([^string value]
+   (insert (cursor) value))
+  ([^Position location ^string value]
+   (. (editor) (edit (fn [^TextEditorEdit editBuilder]
+                       (. editBuilder (insert location value)))))
+   value))
+
+(defn vs-replace
+  "^string"
+  [^Position|Range|Selection location ^string value]
+  (. (editor) (edit (fn [^TextEditorEdit editBuilder]
+                      (. editBuilder (replace location value)))))
+  value)
+
+(defn editor-contents
+  "Get the text of this document.
+   
+   ^string"
+  []
+  (.. (editor) -document getText))
+
+(defn line-contents
+  "Returns a text line denoted by the position. Note
+   that the returned object is *not* live and changes to the
+   document are not reflected.
+   
+   ^string"
+  ([]
+   (line-contents (. (cursor) -line)))
+  ([^number line]
+   (.. (editor) -document (lineAt line) -text)))
 
 (defn following-char
   "Return the character following point, as a string."
@@ -157,3 +235,7 @@
   "true if coll contains elm"
   [coll elm]
   (some #(= elm %) coll))
+
+(defn clone-string [n s]
+  (s/join
+   (for [_ (range 0 n)] s)))

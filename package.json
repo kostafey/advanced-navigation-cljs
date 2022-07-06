@@ -16,7 +16,8 @@
 		"onCommand:advanced-navigation.backwardSexp",
 		"onCommand:advanced-navigation.forwardSexpSelect",
 		"onCommand:advanced-navigation.backwardSexpSelect",
-		"onCommand:advanced-navigation.swapTabGroups"
+		"onCommand:advanced-navigation.swapTabGroups",
+		"onCommand:advanced-navigation.justOneSpace"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -48,6 +49,10 @@
 			{
 				"command": "advanced-navigation.swapTabGroups",
 				"title": "Advanced Navigation: Swap 2 tab groups"
+			},
+			{
+				"command": "advanced-navigation.justOneSpace",
+				"title": "Advanced Navigation: Just one space"
 			}
 		]
 	},

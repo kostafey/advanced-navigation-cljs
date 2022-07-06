@@ -13,7 +13,12 @@
                                    tab-groups
                                    show-text-document
                                    show-text-document-by-uri
-                                   close-tab]]))
+                                   close-tab
+                                   line-contents
+                                   position
+                                   vs-replace
+                                   vs-range
+                                   goto-char]]))
 
 (defn exchange-point-and-mark
   "Put the selection start where cursor is now, and cursor where the 
@@ -115,6 +120,22 @@
         (show-text-document active-document 
                             {:viewColumn target-active-group})))))
 
+(defn just-one-space
+  "Delete all spaces and tabs around point, leaving one space."
+  []
+  (let [contents (line-contents)
+        pos (. (cursor) -character)
+        line (. (cursor) -line)
+        before (subs contents 0 pos)
+        after (subs contents pos (count contents))
+        trimmed-str (str (.replace before #"\s+$" "") " "
+                         (.replace after #"^\s+" ""))]
+    (vs-replace (vs-range (position line 0)
+                          (position line (count contents)))
+                trimmed-str)
+    (goto-char (position
+                line (+ 1 (count (.replace before #"\s+$" "")))))))
+
 (defn activate [context]
   (. context.subscriptions
      (push (register-command
@@ -136,7 +157,10 @@
             "advanced-navigation.swapTabGroups" #'swap-tab-groups)))
   (. context.subscriptions
      (push (register-command
-            "advanced-navigation.activate" #'activate-advanced-navigation))))
+            "advanced-navigation.activate" #'activate-advanced-navigation)))
+  (. context.subscriptions
+     (push (register-command
+            "advanced-navigation.justOneSpace" #'just-one-space))))
 
 (defn deactivate [])
 
