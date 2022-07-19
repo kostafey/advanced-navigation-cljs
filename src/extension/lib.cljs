@@ -154,11 +154,13 @@
 
 (extend-type vscode.Range
   Object
-  (toString [this]
-    (str "Range: " {:start {:line (.. this -start -line)
-                            :character (.. this -start -character)}
-                    :end {:line (.. this -end -line)
-                          :character (.. this -end -character)}})))
+  (toString [^Range this]
+    (let [^Position start-pos (. this -start)
+          ^Position end-pos (. this -end)]
+      (str "Range: " {:start {:line (. start-pos  -line)
+                              :character (. start-pos  -character)}
+                      :end {:line (. end-pos -line)
+                            :character (. end-pos -character)}}))))
 
 (defn vs-range
   "A range represents an ordered pair of two positions.
