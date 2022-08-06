@@ -17,7 +17,17 @@
 		"onCommand:advanced-navigation.forwardSexpSelect",
 		"onCommand:advanced-navigation.backwardSexpSelect",
 		"onCommand:advanced-navigation.swapTabGroups",
-		"onCommand:advanced-navigation.justOneSpace"
+		"onCommand:advanced-navigation.justOneSpace",
+		"onCommand:advanced-navigation.tempEditor-0",
+		"onCommand:advanced-navigation.tempEditor-1",
+		"onCommand:advanced-navigation.tempEditor-2",
+		"onCommand:advanced-navigation.tempEditor-3",
+		"onCommand:advanced-navigation.tempEditor-4",
+		"onCommand:advanced-navigation.tempEditor-5",
+		"onCommand:advanced-navigation.tempEditor-6",
+		"onCommand:advanced-navigation.tempEditor-7",
+		"onCommand:advanced-navigation.tempEditor-8",
+		"onCommand:advanced-navigation.tempEditor-9"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -53,6 +63,59 @@
 			{
 				"command": "advanced-navigation.justOneSpace",
 				"title": "Advanced Navigation: Just one space"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-0",
+				"title": "Advanced Navigation: Temp Editor 0"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-1",
+				"title": "Advanced Navigation: Temp Editor 1"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-2",
+				"title": "Advanced Navigation: Temp Editor 2"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-3",
+				"title": "Advanced Navigation: Temp Editor 3"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-4",
+				"title": "Advanced Navigation: Temp Editor 4"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-5",
+				"title": "Advanced Navigation: Temp Editor 5"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-6",
+				"title": "Advanced Navigation: Temp Editor 6"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-7",
+				"title": "Advanced Navigation: Temp Editor 7"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-8",
+				"title": "Advanced Navigation: Temp Editor 8"
+			},
+			{
+				"command": "advanced-navigation.tempEditor-9",
+				"title": "Advanced Navigation: Temp Editor 9"
+			}
+		],
+		"configuration": [
+			{
+				"title": "Advanced Navigation",
+				"properties": {
+					"advanced-navigation.tempFilePath": {
+						"type": "string",
+						"default": "~/temp",
+						"title": "Path for the temp files.",
+						"markdownDescription": "Path for the temp files"
+					}
+				}
 			}
 		]
 	},

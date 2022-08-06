@@ -23,6 +23,13 @@
   (.. vscode.window (showInformationMessage msg))
   msg)
 
+(defn get-configuration
+  "Return a value from this configuration.
+
+   ^T | undefined"
+  [^string section]
+  (.get (.. vscode.workspace getConfiguration) section))
+
 (defn editor
   "The currently active editor or `undefined`. The active editor is the one
    that currently has focus or, when none has focus, the one that has changed
@@ -65,16 +72,26 @@
    :nine 9 ;; The ninth editor column.
    })
 
+(defn uri
+  "A universal resource identifier representing either a file on disk
+   or another resource, like untitled resources.
+
+   ^Uri"
+  [^string path]
+  (.. vscode.Uri (file path)))
+
 (defn show-text-document-by-uri
   "Show the given document in a text editor.
    Return a promise that resolves to an TextEditor editor.
    
    ^Thenable<TextEditor>"
-  [^Uri uri
-   ^Map<TextDocumentShowOptions> options]
-  (.. vscode.window (showTextDocument
-                     uri
-                     (clj->js options))))
+  ([^Uri uri]
+   (show-text-document-by-uri uri (clj->js {})))
+  ([^Uri uri
+    ^Map<TextDocumentShowOptions> options]
+   (.. vscode.window (showTextDocument
+                      uri
+                      (clj->js options)))))
 
 (defn show-text-document
   "Show the given document in a text editor.
@@ -147,7 +164,7 @@
    the position of the cursor.
    
    ^Position"
-  ([^Vector< ^number> pos]
+  ([^Vector<^number> pos]
    (position (first pos) (second pos)))
   ([^number line ^number character]
    (vscode.Position. line character)))

@@ -28,7 +28,8 @@ Minimal CLJS VSCode extension using shadow-cljs:
     => (shadow/watch :dev)
     => (shadow/repl :dev)
     ```
-4. Run `Command Palette`: `Calva: Connect to a Running REPL Server in the project`
+4. Run `Command Palette`: `Advanced Navigation: Activate` (or any other extension activation command)
+5. Run `Command Palette`: `Calva: Connect to a Running REPL Server in the project`
 * Select `shadow-cljs`
 * Use `host` and `port` from `shadow-cljs clj-repl` command
 * Select `:dev`.

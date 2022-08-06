@@ -2,7 +2,7 @@
   (:require [extension.lib :refer [register-command
                                    message
                                    editor
-                                   selection 
+                                   selection
                                    set-selection
                                    remove-selection
                                    execute-command
@@ -18,7 +18,13 @@
                                    position
                                    vs-replace
                                    vs-range
-                                   goto-char]]))
+                                   goto-char
+                                   uri
+                                   get-configuration]]
+            [goog.string :as gstring]
+            [path]
+            [fs]
+            [os]))
 
 (defn exchange-point-and-mark
   "Put the selection start where cursor is now, and cursor where the 
@@ -136,6 +142,44 @@
     (goto-char (position
                 line (+ 1 (count (.replace before #"\s+$" "")))))))
 
+(def temp-file-name
+  "Temporary file name template."
+  "%s.%s")
+
+(def temp-file-extensions-list
+  "Temporary files extensions list."
+  ["txt" "md" "org" "lua" "js" "json" "clj" "cljs" "edn" "py"])
+
+(defn expand-path
+  "Turn ~/filename into /home/username/filename
+
+   ^string"
+  [^string path]
+  (.replace path "~" (os/homedir)))
+
+(defn temp-editor
+  "Open temporary text file."
+  [^number file-number]
+  (let [base-path (expand-path
+                   (get-configuration "advanced-navigation.tempFilePath"))
+        file-path (or (some (fn [ext]
+                              (let [file-name (gstring/format
+                                               temp-file-name
+                                               file-number
+                                               ext)
+                                    file-path (path/join base-path file-name)]
+                                (when (fs/existsSync file-path)
+                                  file-path)))
+                            temp-file-extensions-list)
+                      (path/join base-path (gstring/format
+                                            temp-file-name
+                                            file-number
+                                            "txt")))]
+    (when-not (fs/existsSync file-path)
+      (fs/writeFile file-path "" (fn [_])))
+    (show-text-document-by-uri (uri file-path))
+    file-path))
+
 (defn activate [context]
   (. context.subscriptions
      (push (register-command
@@ -160,7 +204,14 @@
             "advanced-navigation.activate" #'activate-advanced-navigation)))
   (. context.subscriptions
      (push (register-command
-            "advanced-navigation.justOneSpace" #'just-one-space))))
+            "advanced-navigation.justOneSpace" #'just-one-space)))
+  (doall
+   (map (fn [idx]
+          (. context.subscriptions
+             (push (register-command
+                     (gstring/format "advanced-navigation.tempEditor-%d" idx)
+                    #(temp-editor idx)))))
+        (range 0 10))))
 
 (defn deactivate [])
 
